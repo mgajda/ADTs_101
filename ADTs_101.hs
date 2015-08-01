@@ -272,5 +272,34 @@ emptyBoard = Board []
 ---------------------------
 -- Thanks for listening! --
 ---------------------------
+-- https://cdn.rawgit.com/mgajda/mentorship/master/session1.html
+-- https://github.com/mgajda/ADTs_101
 
--- (I work at Zalora, we're hiring!)
+-- TUTORIAL session:
+--
+data Tree = Leaf Int
+          | Branch { left, right :: Tree
+	           , split :: Int }
+
+-- 
+insert :: Tree -> Int -> Tree
+insert  = undefined
+
+lookup :: Tree -> Int -> Bool
+lookup  = undefined
+
+-- Another version of lookup
+
+-- A bit more difficult is to delete a node:
+delete :: Tree -> Int -> Tree
+delete  = undefined
+
+data PTree a = PLeaf a
+             | PBranch { pLeft, pRight :: Tree a
+	               , pSplit :: a }
+
+pLookup :: Tree a -> a -> Maybe a
+pLookup  = undefined
+
+-- $ >>> :t (<)
+-- Ord a => a -> a -> Bool
