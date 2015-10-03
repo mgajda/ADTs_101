@@ -10,7 +10,7 @@
 -- an interactive talk.
 
 module ADTs_101 where
-
+import Prelude hiding (lookup)
 -- $ >>> "Hello, " ++ "world"
 -- "Hello, world!"
 
@@ -145,6 +145,7 @@ isBlack :: Color -> Bool
 isBlack color = case color of
   Black -> True
   White -> False
+  _     -> error "I know it should be here, but this is impossible."
 
 -- $ >>> isBlack White
 -- False
@@ -183,13 +184,15 @@ data QueenOrigin
 
 
 -- * Deconstruction
+-- Doesn't work: id :: Num a => a -> String
+id x = x 
 
 allowedMoves :: Piece -> [Position]
 allowedMoves piece = case piece of
   Pawn (Position x y) color -> case color of
     White -> [Position x (y + 1)]
     Black -> [Position x (y - 1)]
-  _ -> error "NYI"
+    _     -> error "NYI"
 
 -- $ >>> allowedMoves (Pawn (mkPosition 4) Black)
 -- [Position 4 3]
@@ -277,7 +280,18 @@ emptyBoard = Board []
 
 -- TUTORIAL session:
 --
-data Tree = Leaf Int
+
+data ATree = ALeaf
+          | ABranch { left, right :: BTree
+	           , split :: Int }
+    deriving(Show)
+      
+data BTree = BLeaf
+           | BBranch { left, right, up, down :: ATree
+	             , split :: Int }
+    deriving(Show)
+
+data Tree = Leaf
           | Branch { left, right :: Tree
 	           , split :: Int }
 
@@ -285,8 +299,17 @@ data Tree = Leaf Int
 insert :: Tree -> Int -> Tree
 insert  = undefined
 
-lookup :: Tree -> Int -> Bool
-lookup  = undefined
+data Ordering = LT | EQ | GT
+
+--tlookup :: Tree -> Int -> Bool
+tlookup (Branch left right split) i | i == split = True
+tlookup (Branch left right split) i | i <  split = tlookup left i
+                                   | i >  split  = tlookup right i
+tlookup Leaf                      i              = False
+--lookup (Branch left right split) i | otherwise  = error "impossible!!!"
+                                
+--lookup (Branch left right split) i | i <  split = lookup left i
+--lookup (Branch left right split) i | i >  split = lookup right i
 
 -- Another version of lookup
 
@@ -294,11 +317,11 @@ lookup  = undefined
 delete :: Tree -> Int -> Tree
 delete  = undefined
 
-data PTree a = PLeaf a
-             | PBranch { pLeft, pRight :: Tree a
-	               , pSplit :: a }
+data PTree a = PLeaf
+             | PBranch { pLeft, pRight :: PTree a
+                       , pSplit :: a }
 
-pLookup :: Tree a -> a -> Maybe a
+pLookup :: Ord a => Tree a -> a -> Maybe a
 pLookup  = undefined
 
 -- $ >>> :t (<)
